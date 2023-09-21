@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { Container } from '@chakra-ui/react';
+import { RootStore, RootStoreProvider, setupRootStore } from 'Store';
+import { AppNavigation } from 'Presentation/Navigation';
 
-function App() {
+const App = () => {
+  const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
+
+  useEffect(()=>{
+    const loadPreviusSession = async () => {
+      const store = await setupRootStore()
+      setRootStore(store)
+    }
+    
+    loadPreviusSession()
+  },[])
+
+  if(!rootStore) {
+    return <Container>
+      Loading ...
+    </Container>
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <RootStoreProvider value={rootStore}>
+      <AppNavigation />
+    </RootStoreProvider>
   );
 }
 
